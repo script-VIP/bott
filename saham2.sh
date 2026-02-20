@@ -19,7 +19,7 @@ NC='\033[0m'
 # VARIABEL
 # ============================================
 BOT_DIR="$HOME/tele-saham-bot"
-REPO_URL="https://raw.githubusercontent.com/script-VIP/bott/main"
+REPO_URL="https://raw.githubusercontent.com/script-VIP/bott/main/tele-saham-bot"
 
 # ============================================
 # FUNGSI BANNER
