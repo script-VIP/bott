@@ -10,19 +10,20 @@ Bot Telegram untuk informasi saham Indonesia, analisis teknikal, screening, dan 
 ![Debian](https://img.shields.io/badge/debian-10+-red)
 
 ## 📋 DAFTAR ISI
-- [Link Install](#-link-install)
-- [Fitur](#-fitur)
-- [Screenshot](#-screenshot)
-- [Cara Install](#-cara-install-lengkap)
-- [Cara Upgrade](#-cara-upgrade)
-- [Menjaga Bot Tetap Aktif 24/7](#-menjaga-bot-tetap-aktif-247)
-- [Struktur File](#-struktur-file)
-- [Konfigurasi](#-konfigurasi)
-- [Troubleshooting](#-troubleshooting)
-- [Lisensi](#-lisensi)
+• [Link Install](#-link-install)
+• [Fitur](#-fitur)
+• [Screenshot](#-screenshot)
+• [Cara Install](#-cara-install-lengkap)
+• [Cara Upgrade](#-cara-upgrade)
+• [Menjaga Bot Tetap Aktif 24/7](#-menjaga-bot-tetap-aktif-247)
+• [Struktur File](#-struktur-file)
+• [Konfigurasi](#-konfigurasi)
+• [Command List](#-command-list)
+• [Troubleshooting](#-troubleshooting)
+• [Lisensi](#-lisensi)
 
 ## 🔗 LINK INSTALL
 
-### **INSTALLASI 1 DETIK**
+### **INSTALL 1 DETIK**
 ```bash
 wget -O install.sh https://raw.githubusercontent.com/script-VIP/bott/main/saham.sh && chmod +x install.sh && ./install.sh
