@@ -2134,7 +2134,7 @@ Update: {datetime.now().strftime('%d/%m/%Y')}
 
 # ======================== HANDLER PESAN ========================
 
-async function handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handler untuk pesan teks biasa"""
     text = update.message.text.strip().upper()
     
