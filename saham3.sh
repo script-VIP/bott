@@ -219,19 +219,76 @@ check_status() {
     # Cek proses
     if screen -list | grep -q "sahabot"; then
         echo -e "${GREEN}✓ Bot aktif (Screen)${NC}"
+        BOT_ACTIVE=1
     elif tmux has-session -t sahabot 2>/dev/null; then
         echo -e "${GREEN}✓ Bot aktif (Tmux)${NC}"
+        BOT_ACTIVE=1
     elif sudo systemctl is-active --quiet sahabot.service 2>/dev/null; then
         echo -e "${GREEN}✓ Bot aktif (Systemd)${NC}"
+        BOT_ACTIVE=1
     else
         echo -e "${RED}✗ Bot tidak aktif${NC}"
+        BOT_ACTIVE=0
     fi
     
-    # Cek port 8080
-    if netstat -tln | grep -q ":8080 "; then
-        echo -e "${GREEN}✓ Web server aktif di port 8080${NC}"
+    # CEK PORT 8080 - VERSI ROBUST (TIDAK PERLU NETSTAT)
+    echo -e "${YELLOW}   Memeriksa web server...${NC}"
+    
+    # Method 1: Pakai curl (paling akurat)
+    if command -v curl &> /dev/null; then
+        if curl -s http://localhost:8080/health > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ Web server aktif di port 8080 (merespon)${NC}"
+            WEB_ACTIVE=1
+        else
+            # Method 2: Pakai lsof kalau curl gagal
+            if command -v lsof &> /dev/null; then
+                if lsof -i :8080 | grep -q LISTEN; then
+                    echo -e "${GREEN}✓ Web server aktif di port 8080 (lsof)${NC}"
+                    WEB_ACTIVE=1
+                else
+                    echo -e "${RED}✗ Web server tidak aktif${NC}"
+                    WEB_ACTIVE=0
+                fi
+            # Method 3: Pakai ss kalau ada
+            elif command -v ss &> /dev/null; then
+                if ss -tln | grep -q ":8080"; then
+                    echo -e "${GREEN}✓ Web server aktif di port 8080 (ss)${NC}"
+                    WEB_ACTIVE=1
+                else
+                    echo -e "${RED}✗ Web server tidak aktif${NC}"
+                    WEB_ACTIVE=0
+                fi
+            # Method 4: Pakai netstat kalau ada
+            elif command -v netstat &> /dev/null; then
+                if netstat -tln | grep -q ":8080 "; then
+                    echo -e "${GREEN}✓ Web server aktif di port 8080 (netstat)${NC}"
+                    WEB_ACTIVE=1
+                else
+                    echo -e "${RED}✗ Web server tidak aktif${NC}"
+                    WEB_ACTIVE=0
+                fi
+            else
+                echo -e "${YELLOW}⚠️ Tidak bisa cek port (install net-tools atau lsof)${NC}"
+                echo -e "${YELLOW}   Tapi bot kemungkinan tetap berjalan${NC}"
+            fi
+        fi
     else
-        echo -e "${RED}✗ Web server tidak aktif${NC}"
+        echo -e "${YELLOW}⚠️ curl tidak tersedia, gunakan metode alternatif${NC}"
+        # Fallback ke lsof
+        if command -v lsof &> /dev/null; then
+            if lsof -i :8080 | grep -q LISTEN; then
+                echo -e "${GREEN}✓ Web server aktif di port 8080${NC}"
+            else
+                echo -e "${YELLOW}⚠️ Web server mungkin tidak aktif${NC}"
+            fi
+        fi
+    fi
+    
+    # Beri rekomendasi
+    if [ $BOT_ACTIVE -eq 1 ]; then
+        echo -e "${GREEN}✅ Bot berjalan normal${NC}"
+        echo -e "${BLUE}   • Lihat log: tail -f ~/tele-saham-bot/bot.log${NC}"
+        echo -e "${BLUE}   • Buka web: http://localhost:8080${NC}"
     fi
 }
 
