@@ -1,4 +1,4 @@
-```markdown
+
 # 🤖 BOT SAHAM TELEGRAM INDONESIA
 
 Bot Telegram untuk informasi saham Indonesia, analisis teknikal, screening, dan konsultasi AI.
