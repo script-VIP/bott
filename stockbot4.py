@@ -12,7 +12,6 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import sys
 import random
 import time
-pip3 install python-telegram-bot
 
 print("=" * 50)
 print("🤖 BOT TELEGRAM SAHAM SEDERHANA")
