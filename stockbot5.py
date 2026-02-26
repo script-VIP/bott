@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
-"""
-BOT TELEGRAM SAHAM INDONESIA - VERSION SEDERHANA
-Fitur: Analisis 900+ saham + Bandarmology + Fundamental
-Cara install: python3 bot.py
-"""
+import subprocess
+import sys
+import importlib.util
+
+# Auto install library
+def install_package(package):
+    print(f"📦 Menginstall {package}...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--break-system-packages", package])
+
+# Cek dan install python-telegram-bot
+if importlib.util.find_spec("telegram") is None:
+    install_package("python-telegram-bot")
 
 import logging
 from datetime import datetime
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-import sys
 import random
 import time
 
 print("=" * 50)
-print("🤖 BOT TELEGRAM SAHAM SEDERHANA")
+print("🤖 BOT TELEGRAM SAHAM INDONESIA")
 print("=" * 50)
 print("")
 
@@ -30,63 +36,7 @@ print("✅ Memuat 900+ saham IDX...")
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 # ==================== 900+ SAHAM IDX ====================
-STOCKS = [
-    # LQ45
-    'BBCA', 'BBRI', 'BMRI', 'BBNI', 'BCA', 'TLKM', 'ASII', 'UNVR', 
-    'GGRM', 'HMSP', 'ICBP', 'INDF', 'KLBF', 'CPIN', 'JPFA', 'ADRO', 
-    'PTBA', 'ITMG', 'HRUM', 'MEDC', 'ANTM', 'MDKA', 'INCO', 'BRPT', 
-    'TPIA', 'PGAS', 'PTRO', 'ELSA', 'AKRA', 'MAPI', 'ERAA', 'ACES', 
-    'RALS', 'LPPF', 'MAPA', 'SIDO', 'DVLA', 'KAEF', 'INAF', 'TSPC', 
-    'JSMR', 'EXCL', 'ISAT', 'FREN', 'TOWR', 'WIKA', 'PTPP', 'ADHI', 
-    'WSKT', 'TOTL',
-    
-    # Kompas100
-    'ARTO', 'AALI', 'ADMF', 'AGRO', 'AKPI', 'AMMN', 'ARNA', 'ASGR',
-    'ASRI', 'AUTO', 'BABP', 'BACA', 'BAEK', 'BANK', 'BATA', 'BBHI',
-    'BBKP', 'BBLD', 'BBMD', 'BBTN', 'BBYB', 'BCAP', 'BDMN', 'BEKS',
-    'BFIN', 'BGTG', 'BHIT', 'BIPP', 'BISI', 'BJBR', 'BJTM', 'BKSL',
-    'BMAS', 'BMTR', 'BNBA', 'BNGA', 'BNII', 'BNLI', 'BRAM', 'BRMS',
-    'BSDE', 'BSIM', 'BSSR', 'BUDI', 'BUMI', 'BUVA', 'BVIC', 'CASN',
-    'CEKA', 'CTRA', 'DEWA', 'DGIK', 'DILD', 'DKFT', 'DLTA', 'DMAS',
-    'DOID', 'DPNS', 'DSNG', 'DUTI', 'DYAN', 'EKAD', 'ELTY', 'EMTK',
-    'ENRG', 'EPAC', 'ERTX', 'ESSA', 'ETWA', 'FAJS', 'FASW', 'FMII',
-    'FORU', 'FPNI', 'GAMA', 'GDYR', 'GEMS', 'GJTL', 'GOLD', 'GPRA',
-    'GSMF', 'GTBO', 'GWSA', 'HAIS', 'HDIT', 'HITS', 'HRTA', 'ICON',
-    'IGAR', 'IMAS', 'IMJS', 'INAI', 'INCI', 'INDY', 'INFO', 'INPC',
-    'INPP', 'INTA', 'INTD', 'INTP', 'IPCC', 'IPOL', 'ISSP', 'ITMA',
-    'JAKA', 'JECC', 'JEPE', 'JMAS', 'JPRS', 'JRPT', 'JSKY', 'JSPT',
-    'KARW', 'KBLI', 'KBLM', 'KBRI', 'KDSI', 'KIAS', 'KICI', 'KINO',
-    'KIOS', 'KKGI', 'KMTR', 'KOIN', 'KOPI', 'KOTA', 'KPIG', 'KRAS',
-    'LABA', 'LAMI', 'LCGP', 'LCKM', 'LION', 'LMAS', 'LMSH', 'LPCK',
-    'LPGI', 'LPIN', 'LPKR', 'LPLI', 'LPPS', 'LRNA', 'LSIP', 'LTLS',
-    'MABA', 'MAIN', 'MAMI', 'MASA', 'MAYA', 'MBAP', 'MBSS', 'MBTO',
-    'MCOR', 'MDIA', 'MDLN', 'MDRN', 'MEGA', 'MERK', 'MFIN', 'MFMI',
-    'MICE', 'MIDI', 'MINA', 'MIRA', 'MITI', 'MKNT', 'MKPI', 'MLBI',
-    'MLIA', 'MLND', 'MNCN', 'MORA', 'MPAX', 'MPPA', 'MPRO', 'MRAT',
-    'MSIE', 'MSIN', 'MTDL', 'MTFN', 'MTLA', 'MTSM', 'MYOH', 'MYOR',
-    'MYRX', 'NASA', 'NELY', 'NETV', 'NICK', 'NIFE', 'NIPS', 'NIRO',
-    'NISP', 'NOBU', 'NPGF', 'NRCA', 'NUSA', 'OASA', 'OKAS', 'OMRE',
-    'PADI', 'PALM', 'PANE', 'PANI', 'PANS', 'PBRX', 'PDES', 'PDPP',
-    'PEGE', 'PGLI', 'PICO', 'PJAA', 'PKPK', 'PLAN', 'PLAS', 'PLIN',
-    'PMJS', 'PNBN', 'PNIN', 'PNLF', 'POLL', 'POLY', 'POOL', 'PORT',
-    'POSA', 'POWR', 'PPRO', 'PRAS', 'PRDA', 'PSAB', 'PSDN', 'PSSI',
-    'PTDU', 'PTIS', 'PTMP', 'PTSN', 'PUDP', 'PURA', 'PWON', 'PYFA',
-    'RANC', 'RBMS', 'RDTX', 'REAL', 'RELI', 'RIMO', 'RISE', 'RISH',
-    'RMBA', 'ROCK', 'RODA', 'RUIS', 'SAFE', 'SAME', 'SAMF', 'SAPX',
-    'SARA', 'SATU', 'SCBD', 'SCCO', 'SCMA', 'SDMU', 'SDPC', 'SGER',
-    'SHID', 'SILO', 'SIMP', 'SIPD', 'SKLT', 'SKYB', 'SMAR', 'SMCB',
-    'SMDM', 'SMDR', 'SMMA', 'SMMT', 'SMRU', 'SMRA', 'SMSM', 'SNLK',
-    'SONA', 'SPMA', 'SPMI', 'SQMI', 'SRAJ', 'SRIL', 'SRSN', 'SSIA',
-    'SSTM', 'STAR', 'STTP', 'SUGI', 'SULI', 'SUPR', 'SURY', 'SZPO',
-    'TALF', 'TARA', 'TAXI', 'TBIG', 'TBLA', 'TCPI', 'TCID', 'TDPM',
-    'TELE', 'TFCO', 'TIFA', 'TINS', 'TIRA', 'TIRF', 'TIRT', 'TKIM',
-    'TMAS', 'TMPO', 'TNCA', 'TOBA', 'TOPS', 'TOWR', 'TPMA', 'TRAM',
-    'TRIN', 'TRIO', 'TRIS', 'TRST', 'TRUB', 'TRUK', 'TRUS', 'TURI',
-    'TUVU', 'TWIN', 'TYRE', 'UANG', 'UCID', 'UG', 'ULTJ', 'UNIC',
-    'UNIT', 'UNSP', 'UNTR', 'VIVA', 'VOKS', 'VRNA', 'WAPO', 'WEGE',
-    'WEHA', 'WICO', 'WIIM', 'WIM', 'WINR', 'WINS', 'WOOD', 'WOWS',
-    'WTON', 'YELO', 'YESC', 'YPAS', 'YULE', 'ZBRA', 'ZINC'
-]
+STOCKS = ['BBCA', 'BBRI', 'BMRI', 'BBNI', 'BCA', 'TLKM', 'ASII', 'UNVR', 'GGRM', 'HMSP', 'ICBP', 'INDF', 'KLBF', 'CPIN', 'JPFA', 'ADRO', 'PTBA', 'ITMG', 'HRUM', 'MEDC', 'ANTM', 'MDKA', 'INCO', 'BRPT', 'TPIA', 'PGAS', 'PTRO', 'ELSA', 'AKRA', 'MAPI', 'ERAA', 'ACES', 'RALS', 'LPPF', 'MAPA', 'SIDO', 'DVLA', 'KAEF', 'INAF', 'TSPC', 'JSMR', 'EXCL', 'ISAT', 'FREN', 'TOWR', 'WIKA', 'PTPP', 'ADHI', 'WSKT', 'TOTL', 'ARTO', 'AALI', 'ADMF', 'AGRO', 'AKPI', 'AMMN', 'ARNA', 'ASGR', 'ASRI', 'AUTO', 'BABP', 'BACA', 'BAEK', 'BANK', 'BATA', 'BBHI', 'BBKP', 'BBLD', 'BBMD', 'BBTN', 'BBYB', 'BCAP', 'BDMN', 'BEKS', 'BFIN', 'BGTG', 'BHIT', 'BIPP', 'BISI', 'BJBR', 'BJTM', 'BKSL', 'BMAS', 'BMTR', 'BNBA', 'BNGA', 'BNII', 'BNLI', 'BRAM', 'BRMS', 'BSDE', 'BSIM', 'BSSR', 'BUDI', 'BUMI', 'BUVA', 'BVIC', 'CASN', 'CEKA', 'CTRA', 'DEWA', 'DGIK', 'DILD', 'DKFT', 'DLTA', 'DMAS', 'DOID', 'DPNS', 'DSNG', 'DUTI', 'DYAN', 'EKAD', 'ELTY', 'EMTK', 'ENRG', 'EPAC', 'ERTX', 'ESSA', 'ETWA', 'FAJS', 'FASW', 'FMII', 'FORU', 'FPNI', 'GAMA', 'GDYR', 'GEMS', 'GJTL', 'GOLD', 'GPRA', 'GSMF', 'GTBO', 'GWSA', 'HAIS', 'HDIT', 'HITS', 'HRTA', 'ICON', 'IGAR', 'IMAS', 'IMJS', 'INAI', 'INCI', 'INDY', 'INFO', 'INPC', 'INPP', 'INTA', 'INTD', 'INTP', 'IPCC', 'IPOL', 'ISSP', 'ITMA', 'JAKA', 'JECC', 'JEPE', 'JMAS', 'JPRS', 'JRPT', 'JSKY', 'JSPT', 'KARW', 'KBLI', 'KBLM', 'KBRI', 'KDSI', 'KIAS', 'KICI', 'KINO', 'KIOS', 'KKGI', 'KMTR', 'KOIN', 'KOPI', 'KOTA', 'KPIG', 'KRAS', 'LABA', 'LAMI', 'LCGP', 'LCKM', 'LION', 'LMAS', 'LMSH', 'LPCK', 'LPGI', 'LPIN', 'LPKR', 'LPLI', 'LPPS', 'LRNA', 'LSIP', 'LTLS', 'MABA', 'MAIN', 'MAMI', 'MASA', 'MAYA', 'MBAP', 'MBSS', 'MBTO', 'MCOR', 'MDIA', 'MDLN', 'MDRN', 'MEGA', 'MERK', 'MFIN', 'MFMI', 'MICE', 'MIDI', 'MINA', 'MIRA', 'MITI', 'MKNT', 'MKPI', 'MLBI', 'MLIA', 'MLND', 'MNCN', 'MORA', 'MPAX', 'MPPA', 'MPRO', 'MRAT', 'MSIE', 'MSIN', 'MTDL', 'MTFN', 'MTLA', 'MTSM', 'MYOH', 'MYOR', 'MYRX', 'NASA', 'NELY', 'NETV', 'NICK', 'NIFE', 'NIPS', 'NIRO', 'NISP', 'NOBU', 'NPGF', 'NRCA', 'NUSA', 'OASA', 'OKAS', 'OMRE', 'PADI', 'PALM', 'PANE', 'PANI', 'PANS', 'PBRX', 'PDES', 'PDPP', 'PEGE', 'PGLI', 'PICO', 'PJAA', 'PKPK', 'PLAN', 'PLAS', 'PLIN', 'PMJS', 'PNBN', 'PNIN', 'PNLF', 'POLL', 'POLY', 'POOL', 'PORT', 'POSA', 'POWR', 'PPRO', 'PRAS', 'PRDA', 'PSAB', 'PSDN', 'PSSI', 'PTDU', 'PTIS', 'PTMP', 'PTSN', 'PUDP', 'PURA', 'PWON', 'PYFA', 'RANC', 'RBMS', 'RDTX', 'REAL', 'RELI', 'RIMO', 'RISE', 'RISH', 'RMBA', 'ROCK', 'RODA', 'RUIS', 'SAFE', 'SAME', 'SAMF', 'SAPX', 'SARA', 'SATU', 'SCBD', 'SCCO', 'SCMA', 'SDMU', 'SDPC', 'SGER', 'SHID', 'SILO', 'SIMP', 'SIPD', 'SKLT', 'SKYB', 'SMAR', 'SMCB', 'SMDM', 'SMDR', 'SMMA', 'SMMT', 'SMRU', 'SMRA', 'SMSM', 'SNLK', 'SONA', 'SPMA', 'SPMI', 'SQMI', 'SRAJ', 'SRIL', 'SRSN', 'SSIA', 'SSTM', 'STAR', 'STTP', 'SUGI', 'SULI', 'SUPR', 'SURY', 'SZPO', 'TALF', 'TARA', 'TAXI', 'TBIG', 'TBLA', 'TCPI', 'TCID', 'TDPM', 'TELE', 'TFCO', 'TIFA', 'TINS', 'TIRA', 'TIRF', 'TIRT', 'TKIM', 'TMAS', 'TMPO', 'TNCA', 'TOBA', 'TOPS', 'TOWR', 'TPMA', 'TRAM', 'TRIN', 'TRIO', 'TRIS', 'TRST', 'TRUB', 'TRUK', 'TRUS', 'TURI', 'TUVU', 'TWIN', 'TYRE', 'UANG', 'UCID', 'UG', 'ULTJ', 'UNIC', 'UNIT', 'UNSP', 'UNTR', 'VIVA', 'VOKS', 'VRNA', 'WAPO', 'WEGE', 'WEHA', 'WICO', 'WIIM', 'WIM', 'WINR', 'WINS', 'WOOD', 'WOWS', 'WTON', 'YELO', 'YESC', 'YPAS', 'YULE', 'ZBRA', 'ZINC']
 
 print(f"✅ {len(STOCKS)} saham siap!")
 
@@ -275,42 +225,20 @@ Div: {d['div_yield']:.1f}% [{get_status_dividen(d['div_yield'])}]
 """
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 *BOT SAHAM SEDERHANA*\n\n"
-        "📌 Ketik kode saham:\n"
-        "BBCA, BBRI, TLKM, ASII, GGRM\n\n"
-        "/list - 50 saham\n"
-        "/help - Bantuan",
-        parse_mode='Markdown'
-    )
+    await update.message.reply_text("🤖 *BOT SAHAM SEDERHANA*\n\n📌 Ketik kode saham:\nBBCA, BBRI, TLKM\n\n/list - 50 saham\n/help - Bantuan", parse_mode='Markdown')
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "📚 *BANTUAN*\n\n"
-        "🔍 Ketik kode saham (contoh: BBCA)\n"
-        "/list - Lihat 50 saham\n"
-        "/stats - Statistik",
-        parse_mode='Markdown'
-    )
+    await update.message.reply_text("📚 *BANTUAN*\n\n🔍 Ketik kode saham (contoh: BBCA)\n/list - Lihat 50 saham\n/stats - Statistik", parse_mode='Markdown')
 
 async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     stocks = ", ".join(STOCKS[:50])
-    await update.message.reply_text(
-        f"📋 *50 SAHAM*\n\n{stocks}",
-        parse_mode='Markdown'
-    )
+    await update.message.reply_text(f"📋 *50 SAHAM*\n\n{stocks}", parse_mode='Markdown')
 
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        f"📊 *STATISTIK*\n\n"
-        f"• Total saham: {len(STOCKS)}\n"
-        f"• Cache: {len(stock_cache)}",
-        parse_mode='Markdown'
-    )
+    await update.message.reply_text(f"📊 *STATISTIK*\n\n• Total saham: {len(STOCKS)}\n• Cache: {len(stock_cache)}", parse_mode='Markdown')
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.message.text.strip().upper()
-    
     if msg.isalpha() and len(msg) <= 5:
         await update.message.chat.send_action(action="typing")
         result = analyze(msg)
