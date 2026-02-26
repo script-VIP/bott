@@ -664,4 +664,6 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("stats", stats_command))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     print("✅ Bot siap! Tekan Ctrl+C untuk stop")
-    print("✅ Total saham:", len(STOCKS
+    print("✅ Total saham:", len(STOCKS))
+    print("✅ Termasuk CDIA, SUPA, dan semua saham IPO")
+    app.run_polling()
