@@ -54,12 +54,7 @@ Bot Telegram otomatis untuk penjualan akun VPN dengan dukungan multi-server, sis
 - ✅ Broadcast ke semua user
 - ✅ Restart bot via menu
 - ✅ Backup manual via command
-
----
-
-## 🚀 **Link Instalasi**
-
-### **Instalasi Otomatis (Recommended)**
+🚀 **Link Instalasi**
 ```bash
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt update -y && apt install -y git curl && curl -L -k -sS https://raw.githubusercontent.com/script-VIP/bott/main/Botresseler/install.sh -o install.sh && bash install.sh
 ```
