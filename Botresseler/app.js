@@ -38,6 +38,9 @@ const vars = JSON.parse(fs.readFileSync('./.vars.json', 'utf8'));
 const BOT_TOKEN = vars.BOT_TOKEN;
 const port = vars.PORT || 6969;
 const ADMIN = vars.USER_ID;
+const adminIds = ADMIN.toString(); // Pastikan string
+// atau langsung
+const adminIds = "6198984094"; // PAKSA dengan ID langsung
 const NAMA_STORE = vars.NAMA_STORE || 'AimanVPNExpress';
 const GROUP_ID = vars.GROUP_ID;
 const ADMIN_CONTACT = vars.ADMIN_CONTACT || '@AimanVpnExpress';
@@ -165,11 +168,7 @@ async function saveTrialAccess(userId) {
     [userId, today, userId]);
 }
 
-async function isUserReseller(userId) {
-  if (!fs.existsSync(resselFilePath)) return false;
-  const list = fs.readFileSync(resselFilePath, 'utf8').split('\n').map(l => l.trim()).filter(Boolean);
-  return list.includes(String(userId));
-}
+const { isUserReseller } = require('./reseller');
 
 // ================= COMMANDS =================
 bot.command(['start', 'menu'], async (ctx) => {
