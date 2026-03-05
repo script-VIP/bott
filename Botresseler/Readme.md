@@ -1,6 +1,3 @@
-```markdown
-# 🤖 Bot VPN Gabungan (VPN Biasa + ZIVPN UDP)
-
 Bot Telegram otomatis untuk penjualan akun VPN dengan dukungan multi-server, sistem saldo, manajemen reseller, dan backup otomatis.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
@@ -367,4 +364,4 @@ chmod +x install.sh
 | `Botresseler/modules/zivpn/*` | Module ZIVPN |
 
 
-``
+```
